@@ -2,8 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const http = require("http");
+const auth = require("./middleware/auth");
 
-const { admin_create, admin_login } = require("./controllers/users");
+const {
+  admin_create,
+  admin_login,
+  room_create,
+  room_login,
+} = require("./controllers/users");
 
 const app = express();
 
@@ -15,5 +21,8 @@ app.use(morgan("dev"));
 
 app.post("/admin-create", admin_create);
 app.post("/admin-login", admin_login);
+
+app.post("/room-create", auth("admin"), room_create);
+app.post("/room-login", room_login);
 
 module.exports = http.createServer(app);
