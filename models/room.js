@@ -15,7 +15,7 @@ const roomSchema = new Schema(
       type: String,
       required: [true, "Must not be empty"],
     },
-    socketId: {
+    fcmToken: {
       type: String,
       default: null,
     },

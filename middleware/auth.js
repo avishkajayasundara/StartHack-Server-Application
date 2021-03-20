@@ -15,7 +15,7 @@ module.exports = (admin) => async (request, response, next) => {
     token = request.headers.authorization.split("Bearer ")[1];
   } else {
     //console.error("No token found");
-    return response.status(403).json({ error: "Unauthoraized" });
+    return response.status(403).json({ error: "Unauthorized" });
   }
 
   let auth_token;
@@ -25,7 +25,7 @@ module.exports = (admin) => async (request, response, next) => {
   });
 
   //If token is not succesfully decoded
-  if (!auth_token) return response.status(403).json({ error: "Unauthoraized" });
+  if (!auth_token) return response.status(403).json({ error: "Unauthorized" });
 
   let user;
   let room;
@@ -51,12 +51,12 @@ module.exports = (admin) => async (request, response, next) => {
 
   //If user doesnt exist send error response
   if (!user && !room)
-    return response.status(403).json({ error: "Unauthoraized" });
+    return response.status(403).json({ error: "Unauthorized" });
 
   //If using as admin authorization middleware. check if user is admin
   if (admin === "admin") {
     if (!user) {
-      return response.status(403).json({ error: "Unauthoraized" });
+      return response.status(403).json({ error: "Unauthorized" });
     }
   }
 
