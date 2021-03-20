@@ -1,4 +1,6 @@
 const { sendNotificationToClient } = require("../firebase/notify");
+const Playlist = require("../models/playlist");
+const Room = require("../models/room");
 
 exports.addMessage = async (req, res) => {
   const { name, message } = req.body;
@@ -11,15 +13,36 @@ exports.addMessage = async (req, res) => {
     ];
     const notificationData = {
       title: "New message",
-      body: message,
+      body: "message",
     };
     sendNotificationToClient(tokens, notificationData);
     res.status(200).json({ messages: notificationData });
   } catch (err) {
-    res.status(200).json({ messages: err.stack });
+    res.status(400).json({ messages: err.stack });
   }
 };
 
 exports.playlist = async (request, response) => {
-  const { action, roomId, body } = request.body;
+  const { roomId, playlistId } = request.body;
+
+  try {
+    const room = await Room.findById(roomId).orFail();
+    const token = room.fcmToken;
+
+    if (!token)
+      return response.status(400).json({ error: "FCM token missing in room" });
+
+    const playlist = await Playlist.findById(playlistId).orFail();
+
+    const result = {
+      action: "PLAYLIST",
+      body: playlistId,
+    };
+
+    sendNotificationToClient([token], result);
+
+    return response.status(200).json(result);
+  } catch (err) {
+    response.status(200).json({ messages: err.stack });
+  }
 };
