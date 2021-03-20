@@ -6,6 +6,7 @@ const { JWT_SECRET } = require("../config/env.json");
 
 const Admin = require("../models/admin");
 const Room = require("../models/room");
+const { response } = require("express");
 
 /* DEV ROUTE TO CREATE ADMIN (won't be publicly exposed) */
 exports.admin_create = async (request, response) => {
@@ -77,11 +78,9 @@ exports.admin_login = async (request, response) => {
 };
 
 /* CREATE ROOM */
-exports.create_room = async (request, response) => {
+exports.room_create = async (request, response) => {
   try {
     const roomName = request.body.name;
-
-    // TBD :: Check if room name is already there for respective dealership
 
     let accessCode = crypto.randomBytes(5).toString("hex");
 
@@ -101,7 +100,8 @@ exports.create_room = async (request, response) => {
       $and: [{ name: roomName }, { dealership }],
     });
 
-    if (rooms) return response.status(400).json({ error: "Room exists" });
+    if (rooms.length > 0)
+      return response.status(400).json({ error: "Room exists" });
 
     const room = await Room.create({
       name: roomName,
@@ -112,6 +112,29 @@ exports.create_room = async (request, response) => {
     return response.status(201).json({ room });
   } catch (error) {
     console.log(error);
+    return response.status(500).json({ error });
+  }
+};
+
+/* LOGIN WITH ROOMCODE */
+exports.room_login = async (request, response) => {
+  try {
+    const accessCode = request.body.accessCode;
+
+    if (!accessCode)
+      return response.status(400).json({
+        error: "Access code is required",
+      });
+
+    const room = await Room.findOne({ accessCode });
+
+    if (!room) response.status(400).json({ error: "Access code invalid" });
+
+    //Generate JWT
+    let token = jwt.sign({ room }, JWT_SECRET, { expiresIn: 10 * 60 * 60 });
+
+    return response.json({ token });
+  } catch {
     return response.status(500).json({ error });
   }
 };

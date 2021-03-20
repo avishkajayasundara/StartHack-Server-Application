@@ -7,7 +7,8 @@ const auth = require("./middleware/auth");
 const {
   admin_create,
   admin_login,
-  create_room,
+  room_create,
+  room_login,
 } = require("./controllers/users");
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(morgan("dev"));
 app.post("/admin-create", admin_create);
 app.post("/admin-login", admin_login);
 
-app.post("/create-room", auth("admin"), create_room);
+app.post("/room-create", auth("admin"), room_create);
+app.post("/room-login", room_login);
 
 module.exports = http.createServer(app);
