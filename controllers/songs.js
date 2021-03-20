@@ -7,6 +7,7 @@ const fs = require("fs");
 const Song = require("../models/song");
 const Playlist = require("../models/playlist");
 const { response } = require("express");
+const { request } = require("http");
 
 exports.upload_song = (request, response) => {
   multerUpload(request, response, async (error) => {
@@ -58,6 +59,24 @@ exports.upload_song = (request, response) => {
       }
     }
   });
+};
+
+exports.get_all_songs = async (request, response) => {
+  try {
+    const songs = await Song.find();
+    return response.status(200).json({ songs });
+  } catch (error) {
+    return response.status(500).json({ error });
+  }
+};
+
+exports.get_all_playlists = async (request, response) => {
+  try {
+    const playlists = await Playlist.find();
+    return response.status(200).json({ playlists });
+  } catch (error) {
+    return response.status(500).json({ error });
+  }
 };
 
 exports.create_playlist = async (request, response) => {

@@ -32,7 +32,7 @@ module.exports = (admin) => async (request, response, next) => {
 
   try {
     //If user is an administrator
-    if (auth_token.user.username) {
+    if (auth_token.user) {
       //Check if user exists
       user = await Admin.findOne({
         username: auth_token.user.username,
@@ -45,11 +45,13 @@ module.exports = (admin) => async (request, response, next) => {
       request.room = room;
     }
   } catch (error) {
+    console.log(error);
     return response.status(500).json({ error });
   }
 
   //If user doesnt exist send error response
-  if (!user) return response.status(403).json({ error: "Unauthoraized" });
+  if (!user && !room)
+    return response.status(403).json({ error: "Unauthoraized" });
 
   //If using as admin authorization middleware. check if user is admin
   if (admin === "admin") {

@@ -138,3 +138,16 @@ exports.room_login = async (request, response) => {
     return response.status(500).json({ error });
   }
 };
+
+/* GET ALL ROOMS OF DEALERSHIP */
+exports.get_rooms = async (request, response) => {
+  try {
+    const dealership = request.user.dealership;
+
+    const rooms = await Room.find({ dealership });
+
+    return response.status(200).json({ rooms });
+  } catch {
+    return response.status(500).json({ error });
+  }
+};
