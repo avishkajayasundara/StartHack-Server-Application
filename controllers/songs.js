@@ -127,3 +127,14 @@ exports.add_to_playlist = async (request, response) => {
     return response.status(500).json({ error });
   }
 };
+
+exports.get_playlist = async (request, response) => {
+  const id = request.params.id;
+  try {
+    const playlist = await Playlist.findById(id).populate("songs").orFail();
+    return response.status(200).json({ playlist });
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json({ error });
+  }
+};
