@@ -7,6 +7,7 @@ const { JWT_SECRET } = require("../config/env.json");
 const Admin = require("../models/admin");
 const Room = require("../models/room");
 const { response } = require("express");
+const { request } = require("http");
 
 /* DEV ROUTE TO CREATE ADMIN (won't be publicly exposed) */
 exports.admin_create = async (request, response) => {
@@ -134,7 +135,7 @@ exports.room_login = async (request, response) => {
     let token = jwt.sign({ room }, JWT_SECRET, { expiresIn: 10 * 60 * 60 });
 
     return response.json({ token });
-  } catch {
+  } catch (error) {
     return response.status(500).json({ error });
   }
 };
@@ -147,7 +148,41 @@ exports.get_rooms = async (request, response) => {
     const rooms = await Room.find({ dealership });
 
     return response.status(200).json({ rooms });
-  } catch {
+  } catch (error) {
+    return response.status(500).json({ error });
+  }
+};
+
+/* GET LOGGED IN ROOM OBJECT */
+exports.get_logged_room = async (request, response) => {
+  try {
+    const room = request.room;
+
+    if (!room) response.status(403).json({ error: "Unauthorized" });
+
+    return response.status(200).json({ room });
+  } catch (error) {
+    return response.status(500).json({ error });
+  }
+};
+
+exports.set_room_token = async (request, response) => {
+  try {
+    const roomId = request.room._id;
+
+    const token = request.body.token;
+
+    if (!token)
+      return response.status(400).json({ error: "Token is required" });
+
+    const room = await Room.findById(roomId).orFail();
+
+    room.fcmToken = token;
+
+    const result = await room.save();
+
+    return response.status(200).json({ room: result });
+  } catch (error) {
     return response.status(500).json({ error });
   }
 };

@@ -10,4 +10,6 @@ admin.initializeApp({
   storageBucket: config.storageBucket,
 });
 
-module.exports = { admin };
+const messaging = admin.messaging();
+
+module.exports = { admin, messaging };
