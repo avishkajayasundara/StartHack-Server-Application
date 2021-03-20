@@ -23,7 +23,7 @@ const {
   get_playlist,
 } = require("./controllers/songs");
 
-const { addMessage, playlist } = require("./controllers/notifications");
+const { addMessage, playlist, volume } = require("./controllers/notifications");
 
 const app = express();
 
@@ -51,5 +51,6 @@ app.get("/playlist/:id", auth(), get_playlist);
 
 app.post("/message", addMessage);
 app.post("/play-playlist", auth("admin"), playlist);
+app.post("/change-volume", auth("admin"), volume);
 
 module.exports = http.createServer(app);

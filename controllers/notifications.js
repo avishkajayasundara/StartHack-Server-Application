@@ -46,3 +46,26 @@ exports.playlist = async (request, response) => {
     response.status(200).json({ messages: err.stack });
   }
 };
+
+exports.volume = async (request, response) => {
+  const { roomId, volume } = request.body;
+
+  try {
+    const room = await Room.findById(roomId).orFail();
+    const token = room.fcmToken;
+
+    if (!token)
+      return response.status(400).json({ error: "FCM token missing in room" });
+
+    const result = {
+      action: "VOLUME",
+      body: volume,
+    };
+
+    sendNotificationToClient([token], result);
+
+    return response.status(200).json(result);
+  } catch (err) {
+    response.status(200).json({ messages: err.stack });
+  }
+};
