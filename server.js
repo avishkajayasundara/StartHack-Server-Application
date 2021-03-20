@@ -11,7 +11,11 @@ const {
   room_login,
 } = require("./controllers/users");
 
-const { upload_song, create_playlist } = require("./controllers/songs");
+const {
+  upload_song,
+  create_playlist,
+  add_to_playlist,
+} = require("./controllers/songs");
 
 const app = express();
 
@@ -29,5 +33,6 @@ app.post("/room-login", room_login);
 
 app.post("/add-song", auth("admin"), upload_song);
 app.post("/create-playlist", auth("admin"), create_playlist);
+app.post("/playlist-add/:id", auth("admin"), add_to_playlist);
 
 module.exports = http.createServer(app);
