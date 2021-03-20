@@ -3,9 +3,11 @@ const { multerUpload } = require("../middleware/multer");
 const firebaseConfig = require("../config/fb_config");
 const { admin } = require("../admin");
 const fs = require("fs");
-const Song = require("../models/song");
 
-exports.uploadSong = (request, response) => {
+const Song = require("../models/song");
+const Playlist = require("../models/playlist");
+
+exports.upload_song = (request, response) => {
   multerUpload(request, response, async (error) => {
     if (error) {
       //instanceof multer.MulterError
@@ -55,4 +57,26 @@ exports.uploadSong = (request, response) => {
       }
     }
   });
+};
+
+exports.create_playlist = async (request, response) => {
+  try {
+    const name = request.body.name;
+
+    if (!name) return response.status(400).json({ error: "Name is required" });
+
+    const remaining = await Playlist.find({ name });
+
+    if (remaining.length > 0)
+      return response
+        .status(400)
+        .json({ error: "Playlist with same name exists" });
+
+    const playlist = await Playlist.create({ name });
+
+    return response.status(200).json({ playlist });
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json({ error });
+  }
 };
