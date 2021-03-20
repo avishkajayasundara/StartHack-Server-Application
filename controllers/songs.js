@@ -6,6 +6,7 @@ const fs = require("fs");
 
 const Song = require("../models/song");
 const Playlist = require("../models/playlist");
+const { response } = require("express");
 
 exports.upload_song = (request, response) => {
   multerUpload(request, response, async (error) => {
@@ -45,12 +46,12 @@ exports.upload_song = (request, response) => {
 
         song.url = `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/${request.file.filename}?alt=media`;
 
-        await Song.create(song);
+        const result = await Song.create(song);
 
         //Delete file from temp storage
         fs.unlinkSync(`public/tmp/${request.file.filename}`);
 
-        return response.status(200).json({ song });
+        return response.status(201).json({ song: result });
       } catch (error) {
         console.log(error);
         return response.status(500).json({ error });
@@ -73,6 +74,33 @@ exports.create_playlist = async (request, response) => {
         .json({ error: "Playlist with same name exists" });
 
     const playlist = await Playlist.create({ name });
+
+    return response.status(201).json({ playlist });
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json({ error });
+  }
+};
+
+exports.add_to_playlist = async (request, response) => {
+  const playlist_id = request.params.id;
+  const song_ids = request.body.songs;
+
+  if (!song_ids || song_ids.length < 1)
+    return response.status(400).json({ error: "Songs are needed" });
+
+  try {
+    const playlist = await Playlist.findById(playlist_id)
+      .populate("songs")
+      .orFail();
+
+    const songs = await Song.find({ _id: { $in: song_ids } });
+
+    songs.forEach((song) => {
+      playlist.songs.push(song);
+    });
+
+    playlist.save();
 
     return response.status(200).json({ playlist });
   } catch (error) {
