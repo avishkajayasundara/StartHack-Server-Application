@@ -115,6 +115,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-config/
+
 data/
 config.zip
+starthack-796b2-firebase-adminsdk-v50vi-b635041a27.json
+.env

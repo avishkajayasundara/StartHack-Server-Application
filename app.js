@@ -2,7 +2,9 @@ const server = require("./server");
 const mongoose = require("mongoose");
 
 const port = process.env.PORT || 5000;
-const URL = "mongodb://localhost:27017/MercedesBenz";
+const password = process.env.DATABASE_PASSWORD;
+
+const URL = `mongodb+srv://guyson:${password}@cluster0.r1dm7.mongodb.net/StartHack?retryWrites=true&w=majority`;
 
 // const socketIo = require("socket.io");
 // const io = socketIo(server);
@@ -18,7 +20,7 @@ const URL = "mongodb://localhost:27017/MercedesBenz";
 // });
 
 server.listen(port, () => {
-  console.log("Server online at http://localhost:5000");
+  console.log(`Server online`);
   /* Connect to database */
   mongoose
     .connect(URL, {
