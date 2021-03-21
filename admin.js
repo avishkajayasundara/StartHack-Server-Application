@@ -1,9 +1,10 @@
 //Configuring firebase admin and initialization
 const admin = require("firebase-admin");
 
-const serviceAccount = require("./config/starthack-796b2-firebase-adminsdk-v50vi-b635041a27.json");
+const { adminSdk } = require("./config/firebase_admin_sdk");
 
 const config = require("./config/fb_config");
+serviceAccount = adminSdk;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
