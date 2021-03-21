@@ -6,12 +6,12 @@ A centralized audio controller web application which can connect to the devices 
 
 - Centralized audio controller - https://start-hack-main-controller.web.app/  
   
-- Multi-media player instance - https://starthack-796b2.web.app/login **
+- Multi-media player instance - https://starthack-796b2.web.app/login
 
 
 - Centralized audio controller repository - https://github.com/avishkajayasundara/StartHack-Client-Application
   
-- Multi-media player repository - https://github.com/avishkajayasundara/Mercedes-Multimedia-Player **
+- Multi-media player repository - https://github.com/avishkajayasundara/Mercedes-Multimedia-Player
 
 # Technologies Used
 The backend for this solution was developed using Node JS with Mongo DB as the database, whereas the central controller and the media player applications are developed using React JS. Additionally, Heroku and Firebase has been used to develop this solution.
